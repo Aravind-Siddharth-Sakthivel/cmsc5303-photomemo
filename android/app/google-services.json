@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "24268546159",
+    "project_id": "cmsc5303-asiddharth-photomemo",
+    "storage_bucket": "cmsc5303-asiddharth-photomemo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:24268546159:android:40b72f32341c6205acad9a",
+        "android_client_info": {
+          "package_name": "edu.uco.asiddharth.map2021.l3photomemo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "24268546159-j15gb2bsplf03pb6mi72s5iecr3sqb57.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-T65zPDQx1EgRSOeAQhjNMrR8cKbXtoM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "24268546159-j15gb2bsplf03pb6mi72s5iecr3sqb57.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
