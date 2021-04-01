@@ -97,6 +97,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         keyboardType: TextInputType.emailAddress,
                         obscureText: true,
                         autocorrect: false,
+                        onChanged: con.onchanged,
                         validator: con.validatePassword,
                         onSaved: con.savePassword,
                       ),
@@ -187,6 +188,10 @@ class _Controller {
       return null;
   }
 
+  void onchanged(String value) {
+    password = value;
+  }
+
   void savePassword(String value) {
     password = value;
   }
@@ -209,7 +214,7 @@ class _Controller {
       MyDialog.circularProgressStop(state.context);
       MyDialog.info(
         context: state.context,
-        title: 'Sign In Error',
+        title: 'Sign Up Error',
         content: e.toString(),
       );
       return;

@@ -5,8 +5,10 @@ class MyDialog {
     showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => CircularProgressIndicator(
-              strokeWidth: 5.0,
+        builder: (context) => Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 5.0,
+              ),
             ));
   }
 
