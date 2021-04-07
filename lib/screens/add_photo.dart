@@ -218,7 +218,6 @@ class _Controller {
   void save() async {
     if (!state.formKey.currentState.validate()) return;
     state.formKey.currentState.save();
-
     MyDialog.circularProgressStart(state.context);
     if (state.photo != null) {
       try {

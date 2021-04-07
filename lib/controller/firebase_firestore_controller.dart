@@ -37,32 +37,4 @@ class FirebaseFirestoreController {
       'imgname': newmemo.photoFilename,
     });
   }
-
-  // static getMemo() async {
-  //   List<PhotoMemo> memosList = [];
-
-  //   try {
-  //     await firestor
-  //         .collection('mymemos')
-  //         .get()
-  //         .then((QuerySnapshot querySnapshot) {
-  //       querySnapshot.docs.forEach((QueryDocumentSnapshot doc) {
-  //         PhotoMemo tempMemo = PhotoMemo();
-  //         tempMemo.title = doc.data()['title'];
-  //         tempMemo.docID = doc.id;
-  //         tempMemo.photoFilename = doc.data()['imgname'];
-  //         tempMemo.photoURL = doc.data()['imgurl'];
-  //         tempMemo.memo = doc.data()['Memo'];
-  //         tempMemo.createdBy = doc.data()['createdBy'];
-  //         print(tempMemo.photoURL);
-  //         memosList.add(tempMemo);
-  //       });
-  //     });
-
-  //     return memosList;
-  //   } catch (e) {
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
 }

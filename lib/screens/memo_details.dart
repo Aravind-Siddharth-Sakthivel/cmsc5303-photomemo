@@ -147,44 +147,44 @@ class _MemoDetailsState extends State<MemoDetails> {
                         },
                       ),
                       SizedBox(height: 13),
-                      TextFormField(
-                        initialValue: memo.sharedWith.toString(),
-                        decoration: InputDecoration(
-                          enabled: enabeled,
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                              color: Colors.black,
-                            ),
-                          ),
-                          disabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                              color: Colors.black,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                              color: Colors.black,
-                            ),
-                          ),
-                          hintText: 'SharedWith (comma seperated email list)',
-                          hintStyle: TextStyle(
-                            color: Colors.grey[800],
-                          ),
-                        ),
-                        autocorrect: false,
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                        keyboardType: TextInputType.emailAddress,
-                        maxLines: 2,
-                        validator: PhotoMemo.validateShareWith,
-                        onSaved: (String value) {
-                          con.saveSharedWith(memo, value);
-                        },
-                      ),
+                      // TextFormField(
+                      //   initialValue: memo.sharedWith.toString(),
+                      //   decoration: InputDecoration(
+                      //     enabled: enabeled,
+                      //     focusedBorder: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(15.0),
+                      //       borderSide: BorderSide(
+                      //         color: Colors.black,
+                      //       ),
+                      //     ),
+                      //     disabledBorder: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(15.0),
+                      //       borderSide: BorderSide(
+                      //         color: Colors.black,
+                      //       ),
+                      //     ),
+                      //     enabledBorder: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(15.0),
+                      //       borderSide: BorderSide(
+                      //         color: Colors.black,
+                      //       ),
+                      //     ),
+                      //     hintText: 'SharedWith (comma seperated email list)',
+                      //     hintStyle: TextStyle(
+                      //       color: Colors.grey[800],
+                      //     ),
+                      //   ),
+                      //   autocorrect: false,
+                      //   style: TextStyle(
+                      //     color: Colors.black,
+                      //   ),
+                      //   keyboardType: TextInputType.emailAddress,
+                      //   maxLines: 2,
+                      //   validator: PhotoMemo.validateShareWith,
+                      //   onSaved: (String value) {
+                      //     con.saveSharedWith(memo, value);
+                      //   },
+                      // ),
                     ],
                   ),
                 ),

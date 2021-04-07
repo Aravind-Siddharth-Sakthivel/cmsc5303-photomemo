@@ -5,7 +5,6 @@ import 'package:photomemo/controller/firebase_auth_controller.dart';
 import 'package:photomemo/controller/firebase_firestore_controller.dart';
 import 'package:photomemo/models/constant.dart';
 import 'package:photomemo/models/photomemo.dart';
-import 'package:photomemo/screens/myview/mydialog.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'add_photo.dart';
@@ -144,11 +143,6 @@ class _Controller {
 
   List<PhotoMemo> memosList = [];
   int listLen;
-
-  // void getMemo() async {
-  //   memosList = await FirebaseFirestoreController.getMemo();
-  //   listLen = memosList.length;
-  // }
 
   void addButton() async {
     await Navigator.pushNamed(state.context, AddPhotoMemoScreen.routeName,
