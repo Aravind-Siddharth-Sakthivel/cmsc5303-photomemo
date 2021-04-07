@@ -2,7 +2,9 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:photomemo/controller/firebasecontroller.dart';
+import 'package:photomemo/controller/firebase_auth_controller.dart';
+import 'package:photomemo/controller/firebase_firestore_controller.dart';
+import 'package:photomemo/controller/firebase_storage_controller.dart';
 import 'package:photomemo/models/constant.dart';
 import 'package:photomemo/models/photomemo.dart';
 
@@ -103,33 +105,102 @@ class _AddPhotoMemoState extends State<AddPhotoMemoScreen> {
                       progressMessage,
                       style: Theme.of(context).textTheme.headline6,
                     ),
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'Title',
+              SizedBox(height: 13),
+              Container(
+                padding: EdgeInsets.all(20),
+                color: Color(0xffD6D9F0),
+                child: Column(
+                  children: [
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: "Title",
+                        labelStyle: TextStyle(
+                          color: Colors.grey[800],
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: Colors.black,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      autocorrect: true,
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                      validator: PhotoMemo.validateMemo,
+                      onSaved: con.saveTitle,
+                    ),
+                    SizedBox(height: 13),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: "Memo",
+                        labelStyle: TextStyle(
+                          color: Colors.grey[800],
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: Colors.black,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      autocorrect: true,
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 6,
+                      validator: PhotoMemo.validateMemo,
+                      onSaved: con.saveMemo,
+                    ),
+                    SizedBox(height: 13),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: "SharedWith",
+                        labelStyle: TextStyle(
+                          color: Colors.grey[800],
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: Colors.black,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: Colors.black,
+                          ),
+                        ),
+                        hintText: 'SharedWith (comma seperated email list)',
+                        hintStyle: TextStyle(
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                      autocorrect: false,
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      maxLines: 2,
+                      validator: PhotoMemo.validateShareWith,
+                      onSaved: con.saveSharedWith,
+                    ),
+                  ],
                 ),
-                autocorrect: true,
-                validator: PhotoMemo.validateMemo,
-                onSaved: con.saveTitle,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'Memo',
-                ),
-                autocorrect: true,
-                keyboardType: TextInputType.multiline,
-                maxLines: 6,
-                validator: PhotoMemo.validateMemo,
-                onSaved: con.saveMemo,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'SharedWith (comma seperated email list)',
-                ),
-                autocorrect: false,
-                keyboardType: TextInputType.emailAddress,
-                maxLines: 2,
-                validator: PhotoMemo.validateShareWith,
-                onSaved: con.saveSharedWith,
               ),
             ],
           ),
@@ -147,33 +218,54 @@ class _Controller {
   void save() async {
     if (!state.formKey.currentState.validate()) return;
     state.formKey.currentState.save();
-    print('======${tempMemo.title}');
-    print('======${tempMemo.memo}');
-    print('======${tempMemo.sharedWith}');
 
     MyDialog.circularProgressStart(state.context);
-
-    try {
-      Map photoInfo = await FirebaseController.uploadPhotoFile(
-        photo: state.photo,
-        uid: state.user.uid,
-        listener: (double progress) {
-          state.render(() {
-            if (progress == null)
-              state.progressMessage = null;
-            else {
-              progress *= 100;
-              state.progressMessage =
-                  'Uploading:' + progress.toStringAsFixed(1) + '%';
-            }
-          });
-        },
-      );
+    if (state.photo != null) {
+      try {
+        Map photoInfo = await FirebaseStorageController.uploadPhotoFile(
+          photo: state.photo,
+          uid: state.user.uid,
+          listener: (double progress) {
+            state.render(() {
+              if (progress == null)
+                state.progressMessage = null;
+              else {
+                progress *= 100;
+                state.progressMessage =
+                    'Uploading:' + progress.toStringAsFixed(1) + '%';
+              }
+            });
+          },
+        );
+        String photourl = photoInfo[Constant.ARG_DOWNLOADURL];
+        String filename = photoInfo[Constant.ARG_FILENAME];
+        await FirebaseFirestoreController.addMemo(
+                state.user.uid,
+                tempMemo.title,
+                tempMemo.memo,
+                tempMemo.sharedWith,
+                filename,
+                photourl)
+            .then((value) {
+          MyDialog.circularProgressStop(state.context);
+          Navigator.pop(state.context);
+          MyDialog.info(
+              context: state.context,
+              title: "Success",
+              content: "The memo has beeen succesfully addes");
+        });
+      } catch (e) {
+        print('==========$e');
+      }
+    } else {
+      await FirebaseFirestoreController.addMemo(state.user.uid, tempMemo.title,
+          tempMemo.memo, tempMemo.sharedWith, "", "");
       MyDialog.circularProgressStop(state.context);
-      print('=======filename:${photoInfo[Constant.ARG_FILENAME]}');
-      print('=======filename:${photoInfo[Constant.ARG_DOWNLOADURL]}');
-    } catch (e) {
-      print('==========$e');
+      Navigator.pop(state.context);
+      MyDialog.info(
+          context: state.context,
+          title: "Success",
+          content: "The memo has beeen succesfully addes");
     }
   }
 

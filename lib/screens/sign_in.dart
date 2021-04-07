@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:photomemo/controller/firebasecontroller.dart';
+import 'package:photomemo/controller/firebase_auth_controller.dart';
 import 'package:photomemo/models/constant.dart';
 import 'package:photomemo/screens/sign_up.dart';
 import 'package:photomemo/screens/user_home.dart';
@@ -31,7 +31,6 @@ class _SignInState extends State<SignInScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.blueAccent,
           title: Text('Sign In'),
         ),
         body: SingleChildScrollView(
@@ -174,7 +173,7 @@ class _Controller {
     User user;
     MyDialog.circularProgressStart(state.context);
     try {
-      user = await FirebaseController.signIn(email, password);
+      user = await FirebaseAuthController.signIn(email, password);
     } catch (e) {
       MyDialog.circularProgressStop(state.context);
       MyDialog.info(
