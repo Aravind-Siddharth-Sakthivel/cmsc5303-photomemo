@@ -6,6 +6,7 @@ import 'package:photomemo/controller/firebase_firestore_controller.dart';
 import 'package:photomemo/models/constant.dart';
 import 'package:photomemo/models/photomemo.dart';
 import 'package:photomemo/screens/myview/mydialog.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'add_photo.dart';
 import 'myview/memo_item.dart';
@@ -104,10 +105,24 @@ class _UserHomeState extends State<UserHomeScreen> {
                       return ListView.builder(
                         itemCount: snapshot.data.docs.length,
                         itemBuilder: (context, index) {
-                          DocumentSnapshot memos = snapshot.data.docs[index];
-                          return MemoItem(
-                            width: width,
-                            memoItem: memos.data(),
+                          DocumentSnapshot memo = snapshot.data.docs[index];
+                          PhotoMemo photomemo = PhotoMemo(memo.id, memo.data());
+                          return Slidable(
+                            child: MemoItem(
+                              width: width,
+                              memoItem: photomemo,
+                            ),
+                            actionPane: SlidableDrawerActionPane(),
+                            actionExtentRatio: 0.25,
+                            secondaryActions: <Widget>[
+                              IconSlideAction(
+                                caption: 'Delete',
+                                color: Colors.red,
+                                icon: Icons.delete,
+                                onTap: () =>
+                                    FirebaseFirestoreController.delete(memo.id),
+                              ),
+                            ],
                           );
                         },
                       );

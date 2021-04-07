@@ -9,20 +9,19 @@ class PhotoMemo {
   List<dynamic> sharedWith;
   List<dynamic> imageLabels;
 
-  PhotoMemo({
-    this.docID,
-    this.createdBy,
-    this.memo,
-    this.photoFilename,
-    this.photoURL,
-    this.timestamp,
-    this.title,
-    this.sharedWith,
-    this.imageLabels,
-  }) {
-    this.sharedWith ??= [];
-    this.imageLabels ??= [];
+  PhotoMemo(
+    String docID,
+    Map<String, dynamic> data,
+  ) {
+    this.docID = docID ?? "";
+    this.title = data['title'] ?? "";
+    this.memo = data['Memo'] ?? "";
+    this.photoURL = data['imgurl'] ?? "";
+    this.photoFilename = data['imgname'] ?? "";
+    this.sharedWith = data['sharedwith'] ?? [];
+    this.createdBy = data['createdby'] ?? "";
   }
+
   static String validateTitle(String value) {
     if (value == null || value.length < 3)
       return 'too short';

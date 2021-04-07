@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:photomemo/models/photomemo.dart';
 
 class FirebaseFirestoreController {
   static FirebaseFirestore firestor = FirebaseFirestore.instance;
@@ -26,9 +27,16 @@ class FirebaseFirestoreController {
     await FirebaseFirestore.instance.collection('mymemos').doc(docId).delete();
   }
 
-  //  Future<void> update(docId) async {
-  //   await FirebaseFirestore.instance.collection('mymemos').doc(docId).update(this.toMap());
-  // }
+  static Future<void> update(docId, PhotoMemo newmemo) async {
+    await FirebaseFirestore.instance.collection('mymemos').doc(docId).update({
+      'createdBy': newmemo.createdBy,
+      'title': newmemo.title,
+      'Memo': newmemo.memo,
+      'sharedwith': newmemo.sharedWith,
+      'imgurl': newmemo.photoURL,
+      'imgname': newmemo.photoFilename,
+    });
+  }
 
   // static getMemo() async {
   //   List<PhotoMemo> memosList = [];

@@ -36,4 +36,29 @@ class MyDialog {
       ),
     );
   }
+
+  static void alert(
+      {@required BuildContext context,
+      @required String title,
+      @required Function action}) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        actions: [
+          FlatButton(
+            onPressed: () {
+              action();
+            },
+            child: Text('Yes', style: Theme.of(context).textTheme.button),
+          ),
+          FlatButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Cancel', style: Theme.of(context).textTheme.button),
+          )
+        ],
+      ),
+    );
+  }
 }

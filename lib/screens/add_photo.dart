@@ -213,7 +213,7 @@ class _AddPhotoMemoState extends State<AddPhotoMemoScreen> {
 class _Controller {
   _AddPhotoMemoState state;
   _Controller(this.state);
-  PhotoMemo tempMemo = PhotoMemo();
+  PhotoMemo tempMemo = PhotoMemo("", {});
 
   void save() async {
     if (!state.formKey.currentState.validate()) return;
