@@ -19,7 +19,7 @@ class PhotoMemo {
     this.photoURL = data['imgurl'] ?? "";
     this.photoFilename = data['imgname'] ?? "";
     this.sharedWith = data['sharedwith'] ?? [];
-    this.createdBy = data['createdby'] ?? "";
+    this.createdBy = data['createdBy'] ?? "";
   }
 
   static String validateTitle(String value) {

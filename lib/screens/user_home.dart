@@ -101,10 +101,14 @@ class _UserHomeState extends State<UserHomeScreen> {
                   stream: FirebaseFirestoreController.snapshot,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.active) {
+                      List memos = snapshot.data.docs;
+                      //TODO : where is the uid ?
+                      memos.removeWhere((memo) =>
+                          memo.data()['createdBy'].compareTo(user.uid) != 0);
                       return ListView.builder(
-                        itemCount: snapshot.data.docs.length,
+                        itemCount: memos.length,
                         itemBuilder: (context, index) {
-                          DocumentSnapshot memo = snapshot.data.docs[index];
+                          DocumentSnapshot memo = memos[index];
                           PhotoMemo photomemo = PhotoMemo(memo.id, memo.data());
                           return Slidable(
                             child: MemoItem(

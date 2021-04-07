@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:photomemo/controller/firebase_auth_controller.dart';
 import 'package:photomemo/controller/firebase_firestore_controller.dart';
 import 'package:photomemo/controller/firebase_storage_controller.dart';
 import 'package:photomemo/models/constant.dart';

@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import 'package:photomemo/controller/firebase_firestore_controller.dart';
 import 'package:photomemo/models/photomemo.dart';
 import 'package:photomemo/screens/memo_details.dart';
 
@@ -18,6 +17,7 @@ class MemoItem extends StatelessWidget {
       },
       child: Column(
         children: [
+          SizedBox(height: 16),
           Container(
             padding: EdgeInsets.symmetric(horizontal: width * 0.05),
             child: Row(
@@ -44,7 +44,11 @@ class MemoItem extends StatelessWidget {
               ],
             ),
           ),
-          Divider(color: Colors.white),
+          SizedBox(height: 12),
+          Divider(
+            color: Colors.white,
+            height: 1,
+          ),
         ],
       ),
     );
