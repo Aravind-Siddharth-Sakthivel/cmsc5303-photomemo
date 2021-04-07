@@ -1,6 +1,13 @@
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:photomemo/controller/firebase_firestore_controller.dart';
+import 'package:photomemo/controller/firebase_storage_controller.dart';
+import 'package:photomemo/models/constant.dart';
 import 'package:photomemo/models/photomemo.dart';
+import 'package:photomemo/screens/myview/memo_item.dart';
 import 'package:photomemo/screens/myview/mydialog.dart';
 
 class MemoDetails extends StatefulWidget {
@@ -13,6 +20,9 @@ class MemoDetails extends StatefulWidget {
 class _MemoDetailsState extends State<MemoDetails> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   _Controller con;
+  File updatedPhoto;
+  String progressMessage;
+  User user;
   @override
   void initState() {
     super.initState();
@@ -27,7 +37,7 @@ class _MemoDetailsState extends State<MemoDetails> {
   Widget build(BuildContext context) {
     Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
     PhotoMemo memo = args['memoItem'];
-    // IconData icon = Icons.edit;
+    user ??= args[Constant.ARG_USER];
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -37,9 +47,7 @@ class _MemoDetailsState extends State<MemoDetails> {
               icon: enabeled == false ? Icon(Icons.edit) : Icon(Icons.check),
               onPressed: () {
                 if (enabeled) {
-                  if (!formKey.currentState.validate()) return;
-                  formKey.currentState.save();
-                  FirebaseFirestoreController.update(memo.docID, memo);
+                  con.updateMemo(memo);
                 }
                 setState(() {
                   enabeled = !enabeled;
@@ -67,11 +75,66 @@ class _MemoDetailsState extends State<MemoDetails> {
             key: formKey,
             child: Column(
               children: [
-                if (memo.photoURL.isNotEmpty)
-                  Image.network(
-                    memo.photoURL,
-                    width: 200,
-                  ),
+                Stack(
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      child: (memo.photoURL == "" && updatedPhoto == null)
+                          ? Icon(
+                              Icons.photo,
+                              size: 300,
+                            )
+                          : updatedPhoto == null
+                              ? Image.network(
+                                  memo.photoURL,
+                                  fit: BoxFit.fill,
+                                )
+                              : Image.file(
+                                  updatedPhoto,
+                                  fit: BoxFit.fill,
+                                ),
+                    ),
+                    if (enabeled)
+                      Positioned(
+                        right: 0.0,
+                        bottom: 0.0,
+                        child: Container(
+                          color: Colors.blue[200],
+                          child: PopupMenuButton<String>(
+                            onSelected: con.updatePhoto,
+                            itemBuilder: (context) => <PopupMenuEntry<String>>[
+                              PopupMenuItem(
+                                value: Constant.SRC_CAMERA,
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.photo_camera),
+                                    Text(Constant.SRC_CAMERA),
+                                  ],
+                                ),
+                              ),
+                              PopupMenuItem(
+                                value: Constant.SRC_GALLERY,
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.photo_album),
+                                    Text(Constant.SRC_GALLERY),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                  ],
+                ),
+                (progressMessage == null)
+                    ? SizedBox(
+                        height: 1.0,
+                      )
+                    : Text(
+                        progressMessage,
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
                 SizedBox(height: 13),
                 Container(
                   padding: EdgeInsets.all(20),
@@ -200,6 +263,31 @@ class _Controller {
   _MemoDetailsState state;
   _Controller(this.state);
 
+  void updateMemo(PhotoMemo memo) async {
+    if (state.updatedPhoto != null) {
+      Map photoInfo = await FirebaseStorageController.uploadPhotoFile(
+        photo: state.updatedPhoto,
+        uid: "16516q4sd3q1sdqsdq", //TODO : where is the uid ?
+        listener: (double progress) {
+          state.render(() {
+            if (progress == null)
+              state.progressMessage = null;
+            else {
+              progress *= 100;
+              state.progressMessage =
+                  'Uploading:' + progress.toStringAsFixed(1) + '%';
+            }
+          });
+        },
+      );
+      String photoUrl = photoInfo[Constant.ARG_DOWNLOADURL];
+      memo.photoURL = photoUrl;
+    }
+    if (!state.formKey.currentState.validate()) return;
+    state.formKey.currentState.save();
+    FirebaseFirestoreController.update(memo.docID, memo);
+  }
+
   void saveTitle(PhotoMemo memo, String value) {
     memo.title = value;
   }
@@ -217,10 +305,12 @@ class _Controller {
 
   String loadSharedWith(List sharedWith) {
     String listToString = "";
-    sharedWith.forEach((item) {
-      listToString += item.toString();
-      listToString += ", ";
-    });
+    for(var i=0; i<sharedWith.length; i++) {
+      listToString += sharedWith[i].toString();
+      if(i != sharedWith.length -1 ) {
+        listToString += ", ";
+      }
+    }
     return listToString;
   }
 
@@ -232,6 +322,26 @@ class _Controller {
       });
     } catch (e) {
       print('#################### $e');
+    }
+  }
+
+  void updatePhoto(String src) async {
+    try {
+      PickedFile _imageFile;
+      var _picker = ImagePicker();
+      if (src == Constant.SRC_CAMERA) {
+        _imageFile = await _picker.getImage(source: ImageSource.camera);
+      } else {
+        _imageFile = await _picker.getImage(source: ImageSource.gallery);
+      }
+      if (_imageFile == null) return;
+      state.render(() => state.updatedPhoto = File(_imageFile.path));
+    } catch (e) {
+      MyDialog.info(
+        context: state.context,
+        title: 'Failed to get picture',
+        content: '$e',
+      );
     }
   }
 }

@@ -103,9 +103,9 @@ class _UserHomeState extends State<UserHomeScreen> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.active) {
                       List memos = snapshot.data.docs;
-                      memos.removeWhere((memo) =>
-                          memo.data()['createdBy'] !=
-                          FirebaseAuth.instance.currentUser.uid);
+                      //TODO : where is the uid ?
+                      // memos.removeWhere((memo) =>
+                      //     memo.data()['createdBy'].compareTo(user.uid) != 0);
                       return ListView.builder(
                         itemCount: memos.length,
                         itemBuilder: (context, index) {
